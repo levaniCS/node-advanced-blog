@@ -2,19 +2,17 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
-const bodyParser = require('body-parser');
 const keys = require('./config/keys');
 
 require('./models/User');
 require('./models/Blog');
 require('./services/passport');
-
-mongoose.Promise = global.Promise;
-mongoose.connect(keys.mongoURI, { useMongoClient: true });
+require('./services/cache');
 
 const app = express();
 
-app.use(bodyParser.json());
+//* when we have body larger than 10kb basically not be accepted
+app.use(express.json({ limit: '10kb' }));
 app.use(
   cookieSession({
     maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -36,7 +34,16 @@ if (['production'].includes(process.env.NODE_ENV)) {
   });
 }
 
+mongoose
+  .connect(keys.mongoURI, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('DB connection successful!'));
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Listening on port`, PORT);
+  console.log(`App running on port ${PORT}...`);
 });
