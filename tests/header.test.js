@@ -1,25 +1,23 @@
-const puppeteer = require('puppeteer')
+jest.setTimeout(30000)
 
-let browser, page;
+const Page = require('./helpers/page')
+
+let page
 
 // Automaticly envoked for every test before it runs
 beforeEach(async () => {
-  browser = await puppeteer.launch({
-    headless: false
-  })
-  page = await browser.newPage()
+  page = await Page.build()
   await page.goto('localhost:3000');
 })
-
 // Automaticly envoked for every test after it runs
 afterEach(async () => {
-  await browser.close()
+  await page.close()
 })
 
 test('the header has the correct text', async () => {
-  const text = await page.$eval('a.brand-logo', el => el.innerHTML)
+  const text = await page.getContentsOf('a.brand-logo')
   expect(text).toEqual('Blogster')
-})
+}) 
 
 test('clicking login starts oauth flow', async () => {
   await page.click('.right a')
@@ -28,31 +26,10 @@ test('clicking login starts oauth flow', async () => {
   expect(url).toMatch(/accounts\.google\.com/)
 })
 
-
+// const id = '6069f17a9483632498068d89'
 test('When signed in, shows logout button', async () => {
-  const id = '6069f17a9483632498068d89'
-
-  const Buffer = require('safe-buffer').Buffer;
-  const sessionObject = {
-    passport: { user: id }
-  }
-
-  const sessionString = Buffer.from(
-    JSON.stringify(sessionObject)
-  ).toString('base64')
-
-  const KeyGrip = require('keygrip')
-  const keys = require('../config/keys')
-
-  const keygrip = new KeyGrip([keys.cookieKey])
-  const sig = keygrip.sign('session=' + sessionString)
-
-  await page.setCookie({ name: 'session', value: sessionString })
-  await page.setCookie({ name: 'session.sig', value: sig })
-  await page.goto('localhost:3000')
-  await page.waitFor('a[href="/auth/logout"]',)
-
-  const text = await page.$eval('a[href="/auth/logout"]', el => el.innerHTML)
+  await page.login()
+  const text = await page.getContentsOf('a[href="/auth/logout"]')
 
   expect(text).toEqual('Logout')
 })
