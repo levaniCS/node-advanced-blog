@@ -3,7 +3,6 @@ const sessionFactory = require('../factories/sessionFactory')
 const userFactory = require('../factories/userFactory')
 
 class CustomPage {
-
   // It can be called without .()
   static async build() {
     const browser = await puppeteer.launch({
@@ -41,6 +40,40 @@ class CustomPage {
     return this.page.$eval(selector, el => el.innerHTML)
   }
 
+  get(path) {
+    return this.page.evaluate((_path) => {
+      return fetch(_path, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: 'Test creatig titl', content: 'Test creatig cont'
+        })
+      }).then( res => res.json())
+    }, path)
+  }
+
+  post(path, data) {
+    return this.page.evaluate((_path, _data) => {
+      return fetch(_path, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(_data)
+      }).then( res => res.json())
+
+    }, path, data)
+  }
+
+  execRequests(actions) {
+    return Promise.all(
+      actions.map(({ method, path, data }) => this[method](path, data))
+    )
+  }
 }
 
 module.exports = CustomPage

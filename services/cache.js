@@ -56,7 +56,6 @@ module.exports = {
       if(err) {
         console.log('error: ', err)
       }
-      console.log('result: ', result)
     })
   }
 }

@@ -12,4 +12,4 @@ mongoose
     useFindAndModify: false,
     useUnifiedTopology: true,
   })
-  .then(() => console.log('[TEST] DB connection successful!'));
+  .then(() => {});
