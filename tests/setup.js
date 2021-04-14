@@ -12,4 +12,4 @@ mongoose
     useFindAndModify: false,
     useUnifiedTopology: true,
   })
-  .then(() => {})
+  .then(() => {});
