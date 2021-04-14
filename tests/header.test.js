@@ -7,7 +7,7 @@ let page
 // Automaticly envoked for every test before it runs
 beforeEach(async () => {
   page = await Page.build()
-  await page.goto('localhost:3000');
+  await page.goto('http://localhost:3000');
 })
 // Automaticly envoked for every test after it runs
 afterEach(async () => {
