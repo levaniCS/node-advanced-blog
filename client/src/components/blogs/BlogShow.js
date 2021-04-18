@@ -10,8 +10,13 @@ class BlogShow extends Component {
 
   renderImage() {
     if(this.props.blog.imageUrl) {
-      return <img src={`${awsEndpoint}/${this.props.blog.imageUrl}`}  width={500} />
-    }
+      return (
+        <img
+          src={`${awsEndpoint}/${this.props.blog.imageUrl}`}
+          width={500}
+          alt='Blog-pic'
+        />
+      )
   }
 
   render() {
