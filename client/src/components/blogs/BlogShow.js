@@ -21,10 +21,10 @@ class BlogShow extends Component {
 
   render() {
     if (!this.props.blog) {
-      return '';
+      return <div />
     }
 
-    const { title, content } = this.props.blog;
+    const { title, content } = this.props.blog
 
     return (
       <div>
